@@ -107,6 +107,37 @@
         border: 1px solid rgba(255, 255, 255, 0.3);
         background: #f0f0f0;
       }
+
+      /* Flechas de navegación */
+      .nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: #b7f0ff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+        outline: none;
+      }
+      .nav-arrow:hover {
+        background: rgba(0, 255, 255, 0.3);
+        border-color: #00ffff;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        color: white;
+      }
+      .nav-arrow.prev { left: 15px; }
+      .nav-arrow.next { right: 15px; }
+
       .product-back {
         transform: rotateY(180deg);
       }
@@ -208,6 +239,8 @@
       <div class="digital-card" id="digitalCard">
         <div class="company-header">amandarina.cl</div>
         <div class="product-image-wrapper">
+          <button class="nav-arrow prev" id="prevArrow" title="Anterior">❮</button>
+          <button class="nav-arrow next" id="nextArrow" title="Siguiente">❯</button>
           <div class="product-card-inner">
             <img
               id="productImageFront"
@@ -286,6 +319,8 @@
       const productPriceEl = document.getElementById("productPrice");
       const buyButton = document.getElementById("buyButton");
       const imageWrapper = document.querySelector(".product-image-wrapper");
+      const prevArrow = document.getElementById("prevArrow");
+      const nextArrow = document.getElementById("nextArrow");
 
       // ----------------- FUNCIÓN PARA ACTUALIZAR LA TARJETA CON EL PRODUCTO ACTUAL -----------------
       function updateProductInfo(index) {
@@ -350,6 +385,24 @@
         // para que no cambie de nuevo al retirar el mouse
         productImageFrontEl.src = productos[currentIndex].imagen;
         productImageFrontEl.alt = `Imagen de ${productos[currentIndex].nombre}`;
+      });
+
+      // Navegación con flechas
+      prevArrow.addEventListener("click", (e) => {
+        e.stopPropagation(); // Evita conflictos con el hover del contenedor
+        currentIndex = (currentIndex - 1 + totalProducts) % totalProducts;
+        updateProductInfo(currentIndex);
+        // Sincronizamos ambas imágenes para una navegación coherente
+        productImageFrontEl.src = productos[currentIndex].imagen;
+        productImageBackEl.src = productos[currentIndex].imagen;
+      });
+
+      nextArrow.addEventListener("click", (e) => {
+        e.stopPropagation();
+        currentIndex = (currentIndex + 1) % totalProducts;
+        updateProductInfo(currentIndex);
+        productImageFrontEl.src = productos[currentIndex].imagen;
+        productImageBackEl.src = productos[currentIndex].imagen;
       });
 
       // ---------- COMPRAR: muestra alerta con los datos del producto actual (nombre y precio) ----------
